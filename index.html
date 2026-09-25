@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Pixeliseur X × X</title>
+<title>Pixel Scaler</title>
 
 <style>
     * {
@@ -14,59 +13,58 @@
     body {
         margin: 0;
         min-height: 100vh;
-        font-family: Arial, sans-serif;
         background: #111;
         color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
+        font-family: Arial, sans-serif;
+        padding: 25px;
     }
 
     .container {
-        width: 100%;
-        max-width: 700px;
+        max-width: 850px;
+        margin: auto;
         background: #202020;
         padding: 25px;
         border-radius: 18px;
-        text-align: center;
-        box-shadow: 0 10px 40px rgba(0,0,0,.4);
     }
 
     h1 {
-        margin-top: 0;
+        text-align: center;
     }
 
     .controls {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-        margin: 20px 0;
+        display: grid;
+        gap: 15px;
+        margin-top: 25px;
     }
 
-    input[type="file"] {
-        max-width: 100%;
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+    }
+
+    label {
+        font-weight: bold;
     }
 
     input[type="number"] {
         width: 100px;
-        padding: 10px;
-        border: none;
-        border-radius: 8px;
+        padding: 9px;
+        border: 0;
+        border-radius: 7px;
         font-size: 16px;
     }
 
     button,
     .download {
-        padding: 11px 18px;
-        border: none;
+        border: 0;
         border-radius: 8px;
-        background: white;
-        color: black;
+        padding: 10px 16px;
         font-weight: bold;
         cursor: pointer;
+        background: white;
+        color: black;
         text-decoration: none;
     }
 
@@ -75,19 +73,30 @@
         background: #ddd;
     }
 
-    #info {
-        color: #bbb;
-        margin: 15px 0;
+    .mode {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .mode button.active {
+        background: #888;
+        color: white;
     }
 
     .preview {
-        margin-top: 20px;
-        padding: 15px;
-        background:
-            repeating-conic-gradient(#333 0% 25%, #222 0% 50%)
-            50% / 20px 20px;
+        margin-top: 25px;
+        padding: 20px;
         border-radius: 12px;
         overflow: auto;
+
+        background:
+            repeating-conic-gradient(
+                #333 0% 25%,
+                #222 0% 50%
+            ) 50% / 20px 20px;
+
+        text-align: center;
     }
 
     canvas {
@@ -98,9 +107,14 @@
         border: 2px solid white;
     }
 
-    .download {
+    #download {
         display: none;
         margin-top: 20px;
+    }
+
+    #info {
+        color: #bbb;
+        margin-top: 10px;
     }
 </style>
 </head>
@@ -109,37 +123,132 @@
 
 <div class="container">
 
-    <h1>🖼️ Pixeliseur X × X</h1>
-
-    <p>Choisis une image puis sa résolution.</p>
+    <h1>🖼️ Pixel Scaler</h1>
 
     <div class="controls">
 
-        <input
-            type="file"
-            id="imageInput"
-            accept="image/png,image/jpeg,image/webp"
-        >
-
-        <label>
-            X :
+        <div class="row">
             <input
-                type="number"
-                id="sizeInput"
-                value="32"
-                min="1"
-                max="2048"
+                type="file"
+                id="imageInput"
+                accept="image/png,image/jpeg,image/webp"
             >
-        </label>
+        </div>
 
-        <button id="applyButton">
-            Pixeliser
-        </button>
+        <div class="row">
+            <label>Mode:</label>
+
+            <div class="mode">
+                <button id="scaleMode" class="active">
+                    Pixel Scale
+                </button>
+
+                <button id="resolutionMode">
+                    Final Resolution
+                </button>
+            </div>
+        </div>
+
+        <!-- PIXEL SCALE CONTROLS -->
+
+        <div id="scaleControls">
+
+            <div class="row">
+
+                <label>
+                    X:
+                    <input
+                        type="number"
+                        id="scaleX"
+                        value="2"
+                        min="1"
+                        max="100"
+                    >
+                </label>
+
+                <label>
+                    Y:
+                    <input
+                        type="number"
+                        id="scaleY"
+                        value="2"
+                        min="1"
+                        max="100"
+                    >
+                </label>
+
+                <label>
+                    <input
+                        type="checkbox"
+                        id="lockXY"
+                        checked
+                    >
+                    X = Y
+                </label>
+
+            </div>
+
+        </div>
+
+
+        <!-- FINAL RESOLUTION CONTROLS -->
+
+        <div id="resolutionControls" style="display:none">
+
+            <div class="row">
+
+                <label>
+                    Width:
+                    <input
+                        type="number"
+                        id="finalWidth"
+                        value="128"
+                        min="1"
+                        max="4096"
+                    >
+                </label>
+
+                <label>
+                    Height:
+                    <input
+                        type="number"
+                        id="finalHeight"
+                        value="128"
+                        min="1"
+                        max="4096"
+                    >
+                </label>
+
+                <label>
+                    <input
+                        type="checkbox"
+                        id="lockResolution"
+                        checked
+                    >
+                    X = Y
+                </label>
+
+            </div>
+
+        </div>
+
+
+        <div class="row">
+
+            <button id="applyButton">
+                Apply
+            </button>
+
+            <button id="resetButton">
+                Reset
+            </button>
+
+        </div>
 
     </div>
 
     <div id="info">
-        Aucune image chargée
+        No image loaded
     </div>
 
     <div class="preview">
@@ -147,41 +256,60 @@
     </div>
 
     <a
-        id="downloadButton"
+        id="download"
         class="download"
-        download="image_pixelisee.png"
+        download="pixel_image.png"
     >
-        ⬇️ Télécharger
+        ⬇️ Download PNG
     </a>
 
 </div>
 
-<script>
-const imageInput = document.getElementById("imageInput");
-const sizeInput = document.getElementById("sizeInput");
-const applyButton = document.getElementById("applyButton");
-const canvas = document.getElementById("canvas");
-const downloadButton = document.getElementById("downloadButton");
-const info = document.getElementById("info");
 
-const ctx = canvas.getContext("2d", {
-    alpha: true
-});
+<script>
+
+const imageInput = document.getElementById("imageInput");
+
+const scaleX = document.getElementById("scaleX");
+const scaleY = document.getElementById("scaleY");
+
+const finalWidth = document.getElementById("finalWidth");
+const finalHeight = document.getElementById("finalHeight");
+
+const lockXY = document.getElementById("lockXY");
+const lockResolution = document.getElementById("lockResolution");
+
+const scaleMode = document.getElementById("scaleMode");
+const resolutionMode = document.getElementById("resolutionMode");
+
+const scaleControls = document.getElementById("scaleControls");
+const resolutionControls = document.getElementById("resolutionControls");
+
+const applyButton = document.getElementById("applyButton");
+const resetButton = document.getElementById("resetButton");
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+const info = document.getElementById("info");
+const download = document.getElementById("download");
 
 let image = null;
 let imageURL = null;
 
+let currentMode = "scale";
 
-// Quand l'utilisateur choisit une image
-imageInput.addEventListener("change", function () {
+
+// --------------------------------
+// IMAGE LOADING
+// --------------------------------
+
+imageInput.addEventListener("change", () => {
 
     const file = imageInput.files[0];
 
-    if (!file) {
-        return;
-    }
+    if (!file) return;
 
-    // Supprime l'ancienne URL
     if (imageURL) {
         URL.revokeObjectURL(imageURL);
     }
@@ -190,108 +318,300 @@ imageInput.addEventListener("change", function () {
 
     const img = new Image();
 
-    img.onload = function () {
+    img.onload = () => {
 
         image = img;
 
         info.textContent =
-            `Image originale : ${img.naturalWidth} × ${img.naturalHeight} pixels`;
+            `Original: ${img.naturalWidth} × ${img.naturalHeight} pixels`;
 
-        // Affichage automatique
-        resizeImage();
+        apply();
+
     };
 
-    img.onerror = function () {
-        alert("Impossible de charger cette image.");
+    img.onerror = () => {
+        alert("Could not load this image.");
     };
 
     img.src = imageURL;
 });
 
 
-// Bouton Pixeliser
-applyButton.addEventListener("click", resizeImage);
+// --------------------------------
+// MODE BUTTONS
+// --------------------------------
+
+scaleMode.addEventListener("click", () => {
+
+    currentMode = "scale";
+
+    scaleMode.classList.add("active");
+    resolutionMode.classList.remove("active");
+
+    scaleControls.style.display = "block";
+    resolutionControls.style.display = "none";
+
+});
 
 
-// Touche Entrée dans la case X
-sizeInput.addEventListener("keydown", function (event) {
+resolutionMode.addEventListener("click", () => {
 
-    if (event.key === "Enter") {
-        resizeImage();
+    currentMode = "resolution";
+
+    resolutionMode.classList.add("active");
+    scaleMode.classList.remove("active");
+
+    scaleControls.style.display = "none";
+    resolutionControls.style.display = "block";
+
+});
+
+
+// --------------------------------
+// X = Y FOR SCALE
+// --------------------------------
+
+scaleX.addEventListener("input", () => {
+
+    if (lockXY.checked) {
+        scaleY.value = scaleX.value;
+    }
+
+});
+
+scaleY.addEventListener("input", () => {
+
+    if (lockXY.checked) {
+        scaleX.value = scaleY.value;
     }
 
 });
 
 
-function resizeImage() {
+// --------------------------------
+// X = Y FOR RESOLUTION
+// --------------------------------
+
+finalWidth.addEventListener("input", () => {
+
+    if (lockResolution.checked) {
+        finalHeight.value = finalWidth.value;
+    }
+
+});
+
+finalHeight.addEventListener("input", () => {
+
+    if (lockResolution.checked) {
+        finalWidth.value = finalHeight.value;
+    }
+
+});
+
+
+// --------------------------------
+// APPLY
+// --------------------------------
+
+applyButton.addEventListener("click", apply);
+
+
+function apply() {
 
     if (!image) {
-        alert("Choisis d'abord une image !");
-        return;
-    }
 
-    let size = parseInt(sizeInput.value);
-
-    if (isNaN(size)) {
-        alert("Entre une taille valide.");
-        return;
-    }
-
-    size = Math.max(1, Math.min(2048, size));
-
-    sizeInput.value = size;
-
-
-    // Canvas final = X × X
-    canvas.width = size;
-    canvas.height = size;
-
-
-    // Important :
-    // on désactive le lissage pour obtenir des pixels nets
-    ctx.imageSmoothingEnabled = false;
-
-
-    // Nettoyage
-    ctx.clearRect(0, 0, size, size);
-
-
-    // Dessin de l'image en X × X
-    ctx.drawImage(
-        image,
-        0,
-        0,
-        size,
-        size
-    );
-
-
-    info.textContent =
-        `Résolution finale : ${size} × ${size} pixels`;
-
-
-    // Prépare le téléchargement
-    canvas.toBlob(function (blob) {
-
-        if (!blob) {
-            alert("Erreur lors de la création de l'image.");
+        if (imageInput.files.length === 0) {
             return;
         }
 
-        // Supprime l'ancien lien
-        if (downloadButton.dataset.url) {
-            URL.revokeObjectURL(downloadButton.dataset.url);
+        return;
+    }
+
+
+    if (currentMode === "scale") {
+
+        let sx = parseInt(scaleX.value);
+        let sy = parseInt(scaleY.value);
+
+        sx = Math.max(1, Math.min(100, sx));
+        sy = Math.max(1, Math.min(100, sy));
+
+        scaleX.value = sx;
+        scaleY.value = sy;
+
+
+        /*
+            IMPORTANT:
+
+            We first reduce the image to its pixel-art
+            resolution.
+
+            Example:
+
+            Original = 800 × 600
+            Scale = 4
+
+            Pixel-art size becomes:
+
+            200 × 150
+
+            Then EVERY pixel is repeated 4 × 4.
+
+            This gives real pixel blocks instead
+            of simply stretching the image.
+        */
+
+        const smallCanvas = document.createElement("canvas");
+
+        const smallWidth =
+            Math.max(1, Math.floor(image.naturalWidth / sx));
+
+        const smallHeight =
+            Math.max(1, Math.floor(image.naturalHeight / sy));
+
+        smallCanvas.width = smallWidth;
+        smallCanvas.height = smallHeight;
+
+        const smallCtx = smallCanvas.getContext("2d");
+
+        smallCtx.imageSmoothingEnabled = false;
+
+        smallCtx.drawImage(
+            image,
+            0,
+            0,
+            smallWidth,
+            smallHeight
+        );
+
+
+        // Final image
+
+        canvas.width = smallWidth * sx;
+        canvas.height = smallHeight * sy;
+
+        ctx.imageSmoothingEnabled = false;
+
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+        // Every pixel is repeated
+        ctx.drawImage(
+            smallCanvas,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+        info.textContent =
+            `Pixel scale: ${sx} × ${sy} | Final: ${canvas.width} × ${canvas.height}`;
+
+    }
+
+
+    else {
+
+        let width = parseInt(finalWidth.value);
+        let height = parseInt(finalHeight.value);
+
+        width = Math.max(1, Math.min(4096, width));
+        height = Math.max(1, Math.min(4096, height));
+
+        finalWidth.value = width;
+        finalHeight.value = height;
+
+
+        canvas.width = width;
+        canvas.height = height;
+
+        ctx.imageSmoothingEnabled = false;
+
+        ctx.clearRect(
+            0,
+            0,
+            width,
+            height
+        );
+
+        ctx.drawImage(
+            image,
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        info.textContent =
+            `Final resolution: ${width} × ${height}`;
+
+    }
+
+
+    updateDownload();
+}
+
+
+// --------------------------------
+// DOWNLOAD
+// --------------------------------
+
+function updateDownload() {
+
+    canvas.toBlob(blob => {
+
+        if (!blob) return;
+
+        if (download.dataset.url) {
+            URL.revokeObjectURL(download.dataset.url);
         }
 
         const url = URL.createObjectURL(blob);
 
-        downloadButton.href = url;
-        downloadButton.dataset.url = url;
+        download.href = url;
+        download.dataset.url = url;
 
-        downloadButton.style.display = "inline-block";
+        download.style.display = "inline-block";
 
     }, "image/png");
+
 }
+
+
+// --------------------------------
+// RESET
+// --------------------------------
+
+resetButton.addEventListener("click", () => {
+
+    scaleX.value = 2;
+    scaleY.value = 2;
+
+    finalWidth.value = 128;
+    finalHeight.value = 128;
+
+    lockXY.checked = true;
+    lockResolution.checked = true;
+
+    canvas.width = 0;
+    canvas.height = 0;
+
+    download.style.display = "none";
+
+    info.textContent =
+        image
+        ? `Original: ${image.naturalWidth} × ${image.naturalHeight} pixels`
+        : "No image loaded";
+
+});
+
 </script>
 
 </body>
