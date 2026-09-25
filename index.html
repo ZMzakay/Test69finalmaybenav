@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Pixeliseur X × Y</title>
+<title>Générateur d'image géante</title>
 
 <style>
     * {
@@ -14,19 +14,23 @@
     body {
         margin: 0;
         min-height: 100vh;
-        background: #111;
-        color: white;
-        font-family: Arial, sans-serif;
         padding: 25px;
+
+        background: #101010;
+        color: white;
+
+        font-family: Arial, sans-serif;
     }
 
     .conteneur {
         width: 100%;
         max-width: 900px;
+
         margin: auto;
+        padding: 25px;
+
         background: #202020;
         border-radius: 18px;
-        padding: 25px;
     }
 
     h1 {
@@ -35,24 +39,29 @@
     }
 
     .bloc {
+        margin-top: 18px;
+        padding: 18px;
+
         background: #2b2b2b;
         border-radius: 12px;
-        padding: 18px;
-        margin-top: 15px;
     }
 
     .ligne {
         display: flex;
-        align-items: center;
         flex-wrap: wrap;
+        align-items: center;
+
         gap: 12px;
     }
 
     input[type="number"] {
-        width: 90px;
-        padding: 9px;
+        width: 120px;
+
+        padding: 10px;
+
         border: none;
         border-radius: 7px;
+
         font-size: 16px;
     }
 
@@ -60,20 +69,33 @@
         max-width: 100%;
     }
 
+    select {
+        padding: 10px;
+
+        border: none;
+        border-radius: 7px;
+
+        font-size: 15px;
+    }
+
     button,
-    .telecharger {
+    .telechargement {
+        padding: 11px 17px;
+
         border: none;
         border-radius: 8px;
-        padding: 10px 16px;
+
         background: white;
         color: black;
+
         font-weight: bold;
+
         cursor: pointer;
         text-decoration: none;
     }
 
     button:hover,
-    .telecharger:hover {
+    .telechargement:hover {
         background: #ddd;
     }
 
@@ -89,18 +111,24 @@
         font-size: 14px;
     }
 
-    #informations {
-        text-align: center;
-        color: #bbb;
+    #infos {
         margin: 20px 0;
+
+        text-align: center;
+
+        color: #bbb;
     }
 
     .apercu {
-        width: 100%;
+        margin-top: 20px;
+
+        padding: 20px;
+
         max-height: 600px;
         overflow: auto;
-        padding: 20px;
+
         text-align: center;
+
         border-radius: 12px;
 
         background:
@@ -110,23 +138,44 @@
             ) 50% / 20px 20px;
     }
 
-    canvas {
+    #canvas {
         max-width: 100%;
         height: auto;
+
         border: 2px solid white;
 
-        /*
-         * Permet de garder les pixels
-         * nets lorsqu'on zoome.
-         */
         image-rendering: pixelated;
         image-rendering: crisp-edges;
     }
 
-    #telecharger {
+    #message {
         display: none;
+
+        padding: 20px;
+
+        background: #181818;
+
+        border-radius: 10px;
+
+        color: #ccc;
+    }
+
+    .boutons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .telechargement {
+        display: none;
+
         margin: 20px auto 0;
+
         width: max-content;
+    }
+
+    .danger {
+        color: #ffb0b0;
     }
 </style>
 </head>
@@ -135,14 +184,14 @@
 
 <div class="conteneur">
 
-    <h1>🖼️ Pixeliseur X × Y</h1>
+    <h1>🖼️ Générateur d'images pixelisées</h1>
 
 
     <!-- IMAGE -->
 
     <div class="bloc">
 
-        <h3>1. Choisir une image</h3>
+        <h3>1. Image originale</h3>
 
         <input
             type="file"
@@ -150,40 +199,64 @@
             accept="image/png,image/jpeg,image/webp"
         >
 
+        <p class="description">
+            Choisis l'image que tu veux transformer.
+        </p>
+
     </div>
 
 
-    <!-- TAILLE DES BLOCS -->
+    <!-- MODE -->
 
     <div class="bloc">
 
-        <h3>2. Taille des pixels</h3>
+        <h3>2. Taille de sortie</h3>
 
         <div class="ligne">
 
             <label>
-                X :
-                <input
-                    type="number"
-                    id="pixelX"
-                    value="4"
-                    min="1"
-                    max="500"
-                >
+                Mode :
             </label>
 
+            <select id="mode">
+
+                <option value="petit">
+                    📉 Plus petit que l'original
+                </option>
+
+                <option value="grand">
+                    📈 Plus grand que l'original
+                </option>
+
+            </select>
+
+        </div>
+
+        <br>
+
+        <div class="ligne">
 
             <label>
-                Y :
+                Largeur :
                 <input
                     type="number"
-                    id="pixelY"
-                    value="4"
+                    id="largeur"
+                    value="128"
                     min="1"
-                    max="500"
+                    max="64000"
                 >
             </label>
 
+            <label>
+                Hauteur :
+                <input
+                    type="number"
+                    id="hauteur"
+                    value="128"
+                    min="1"
+                    max="64000"
+                >
+            </label>
 
             <label class="case">
 
@@ -193,26 +266,36 @@
                     checked
                 >
 
-                X = Y
+                Garder le même rapport
 
             </label>
 
         </div>
 
-
         <p class="description">
 
-            X = largeur du bloc de pixels.<br>
-            Y = hauteur du bloc de pixels.<br><br>
-
-            Exemple : X = 4 et Y = 4 signifie qu'une
-            zone de 4×4 pixels devient une seule couleur.
+            Tu peux mettre n'importe quelle taille jusqu'à
+            64 000 × 64 000 dans les champs.
 
             <br><br>
 
-            ⚠️ La taille finale de l'image ne change pas.
+            Exemple :
+            <b>64000 × 64000</b>
 
         </p>
+
+    </div>
+
+
+    <!-- INFORMATIONS -->
+
+    <div class="bloc">
+
+        <div id="infos">
+            Aucune image chargée.
+        </div>
+
+        <div id="message"></div>
 
     </div>
 
@@ -221,10 +304,10 @@
 
     <div class="bloc">
 
-        <div class="ligne">
+        <div class="boutons">
 
-            <button id="appliquer">
-                ✨ Appliquer
+            <button id="generer">
+                🚀 Générer
             </button>
 
             <button id="reinitialiser">
@@ -236,18 +319,17 @@
     </div>
 
 
-    <!-- INFORMATIONS -->
-
-    <div id="informations">
-        Aucune image chargée.
-    </div>
-
-
     <!-- APERCU -->
 
-    <div class="apercu">
+    <div class="bloc">
 
-        <canvas id="canvas"></canvas>
+        <h3>👁️ Aperçu</h3>
+
+        <div class="apercu" id="zoneApercu">
+
+            <canvas id="canvas"></canvas>
+
+        </div>
 
     </div>
 
@@ -255,11 +337,20 @@
     <!-- TELECHARGEMENT -->
 
     <a
-        id="telecharger"
-        class="telecharger"
-        download="image-pixelisee.png"
+        id="telechargerPNG"
+        class="telechargement"
+        download="image_geante.png"
     >
-        ⬇️ Télécharger l'image
+        ⬇️ Télécharger le PNG
+    </a>
+
+
+    <a
+        id="telechargerSVG"
+        class="telechargement"
+        download="image_geante.svg"
+    >
+        ⬇️ Télécharger le SVG géant
     </a>
 
 </div>
@@ -276,17 +367,20 @@
 const imageInput =
     document.getElementById("imageInput");
 
-const pixelX =
-    document.getElementById("pixelX");
+const mode =
+    document.getElementById("mode");
 
-const pixelY =
-    document.getElementById("pixelY");
+const largeur =
+    document.getElementById("largeur");
+
+const hauteur =
+    document.getElementById("hauteur");
 
 const verrou =
     document.getElementById("verrou");
 
-const appliquer =
-    document.getElementById("appliquer");
+const generer =
+    document.getElementById("generer");
 
 const reinitialiser =
     document.getElementById("reinitialiser");
@@ -297,26 +391,64 @@ const canvas =
 const contexte =
     canvas.getContext("2d");
 
-const informations =
-    document.getElementById("informations");
+const infos =
+    document.getElementById("infos");
 
-const telecharger =
-    document.getElementById("telecharger");
+const message =
+    document.getElementById("message");
+
+const zoneApercu =
+    document.getElementById("zoneApercu");
+
+const telechargerPNG =
+    document.getElementById("telechargerPNG");
+
+const telechargerSVG =
+    document.getElementById("telechargerSVG");
 
 
 let image = null;
 let urlImage = null;
 
+let rapportOriginal = 1;
+
 
 /*
 ==================================================
-CHARGER L'IMAGE
+LIMITES
+==================================================
+*/
+
+/*
+ * Au-dessus de cette taille, on ne tente PAS
+ * d'afficher l'aperçu.
+ */
+
+const LIMITE_APERCU = 4096;
+
+
+/*
+ * Nombre maximal de pixels pour tenter
+ * de fabriquer un PNG avec Canvas.
+ *
+ * 25 millions de pixels = environ 100 Mo
+ * uniquement pour les données RGBA.
+ */
+
+const LIMITE_CANVAS =
+    25_000_000;
+
+
+/*
+==================================================
+CHARGEMENT DE L'IMAGE
 ==================================================
 */
 
 imageInput.addEventListener("change", function () {
 
-    const fichier = imageInput.files[0];
+    const fichier =
+        imageInput.files[0];
 
     if (!fichier) {
         return;
@@ -336,87 +468,147 @@ imageInput.addEventListener("change", function () {
         new Image();
 
 
-    nouvelleImage.onload = function () {
+    nouvelleImage.onload =
+        function () {
 
-        image = nouvelleImage;
-
-
-        informations.textContent =
-            "Image : " +
-            image.naturalWidth +
-            " × " +
-            image.naturalHeight +
-            " pixels";
+            image =
+                nouvelleImage;
 
 
-        appliquerPixelisation();
-
-    };
-
-
-    nouvelleImage.onerror = function () {
-
-        alert(
-            "Impossible de charger cette image."
-        );
-
-    };
+            rapportOriginal =
+                image.naturalWidth /
+                image.naturalHeight;
 
 
-    nouvelleImage.src = urlImage;
-
-});
-
-
-/*
-==================================================
-VERROU X / Y
-==================================================
-*/
-
-pixelX.addEventListener("input", function () {
-
-    if (verrou.checked) {
-
-        pixelY.value =
-            pixelX.value;
-
-    }
-
-});
+            infos.textContent =
+                "Image originale : " +
+                image.naturalWidth +
+                " × " +
+                image.naturalHeight +
+                " pixels";
 
 
-pixelY.addEventListener("input", function () {
+            /*
+             * Met automatiquement une taille
+             * proportionnelle.
+             */
 
-    if (verrou.checked) {
+            largeur.value =
+                image.naturalWidth;
 
-        pixelX.value =
-            pixelY.value;
+            hauteur.value =
+                image.naturalHeight;
 
-    }
+        };
+
+
+    nouvelleImage.onerror =
+        function () {
+
+            alert(
+                "Impossible de charger cette image."
+            );
+
+        };
+
+
+    nouvelleImage.src =
+        urlImage;
 
 });
 
 
 /*
 ==================================================
-BOUTON APPLIQUER
+RAPPORT LARGEUR / HAUTEUR
 ==================================================
 */
 
-appliquer.addEventListener(
-    "click",
-    appliquerPixelisation
+largeur.addEventListener(
+    "input",
+    function () {
+
+        if (!verrou.checked) {
+            return;
+        }
+
+
+        if (!image) {
+            return;
+        }
+
+
+        const nouvelleLargeur =
+            Number(largeur.value);
+
+
+        if (
+            !nouvelleLargeur ||
+            nouvelleLargeur < 1
+        ) {
+            return;
+        }
+
+
+        hauteur.value =
+            Math.round(
+                nouvelleLargeur /
+                rapportOriginal
+            );
+
+    }
+);
+
+
+hauteur.addEventListener(
+    "input",
+    function () {
+
+        if (!verrou.checked) {
+            return;
+        }
+
+
+        if (!image) {
+            return;
+        }
+
+
+        const nouvelleHauteur =
+            Number(hauteur.value);
+
+
+        if (
+            !nouvelleHauteur ||
+            nouvelleHauteur < 1
+        ) {
+            return;
+        }
+
+
+        largeur.value =
+            Math.round(
+                nouvelleHauteur *
+                rapportOriginal
+            );
+
+    }
 );
 
 
 /*
 ==================================================
-PIXELISATION
+GÉNÉRER
 ==================================================
 */
 
-function appliquerPixelisation() {
+generer.addEventListener(
+    "click",
+    genererImage
+);
+
+
+function genererImage() {
 
     if (!image) {
 
@@ -428,343 +620,527 @@ function appliquerPixelisation() {
     }
 
 
-    let x =
-        parseInt(pixelX.value);
+    let largeurFinale =
+        Math.floor(
+            Number(largeur.value)
+        );
 
-    let y =
-        parseInt(pixelY.value);
+    let hauteurFinale =
+        Math.floor(
+            Number(hauteur.value)
+        );
+
+
+    /*
+     * Sécurité.
+     */
+
+    largeurFinale =
+        Math.max(
+            1,
+            Math.min(
+                64000,
+                largeurFinale
+            )
+        );
+
+
+    hauteurFinale =
+        Math.max(
+            1,
+            Math.min(
+                64000,
+                hauteurFinale
+            )
+        );
+
+
+    largeur.value =
+        largeurFinale;
+
+    hauteur.value =
+        hauteurFinale;
+
+
+    const nombrePixels =
+        largeurFinale *
+        hauteurFinale;
+
+
+    infos.textContent =
+        "Taille demandée : " +
+        largeurFinale +
+        " × " +
+        hauteurFinale +
+        " pixels";
+
+
+    /*
+     =================================================
+     CAS 1 :
+     PETITE IMAGE
+     =================================================
+    */
+
+    if (
+        mode.value === "petit"
+    ) {
+
+        creerImagePetite(
+            largeurFinale,
+            hauteurFinale
+        );
+
+    }
+
+
+    /*
+     =================================================
+     CAS 2 :
+     GRANDE IMAGE
+     =================================================
+    */
+
+    else {
+
+        /*
+         * Si c'est raisonnable :
+         * création PNG normale.
+         */
+
+        if (
+            nombrePixels <= LIMITE_CANVAS
+        ) {
+
+            creerImageGrande(
+                largeurFinale,
+                hauteurFinale
+            );
+
+        }
+
+        /*
+         * Si c'est énorme :
+         * pas d'aperçu.
+         */
+
+        else {
+
+            afficherAucuneApercu(
+                largeurFinale,
+                hauteurFinale
+            );
+
+
+            /*
+             * On prépare quand même
+             * le SVG géant.
+             */
+
+            creerSVG(
+                largeurFinale,
+                hauteurFinale
+            );
+
+        }
+
+    }
+
+}
+
+
+/*
+==================================================
+IMAGE PLUS PETITE
+==================================================
+*/
+
+function creerImagePetite(
+    largeurFinale,
+    hauteurFinale
+) {
+
+    canvas.width =
+        largeurFinale;
+
+    canvas.height =
+        hauteurFinale;
+
+
+    contexte.imageSmoothingEnabled =
+        false;
+
+
+    contexte.clearRect(
+        0,
+        0,
+        largeurFinale,
+        hauteurFinale
+    );
+
+
+    /*
+     * Pour une image plus petite,
+     * on réduit l'image.
+     */
+
+    contexte.drawImage(
+        image,
+        0,
+        0,
+        largeurFinale,
+        hauteurFinale
+    );
+
+
+    afficherApercu();
+
+
+    preparerPNG();
+
+
+    /*
+     * On peut également faire
+     * une version SVG.
+     */
+
+    creerSVG(
+        largeurFinale,
+        hauteurFinale
+    );
+
+
+    infos.textContent =
+        "Image créée : " +
+        largeurFinale +
+        " × " +
+        hauteurFinale +
+        " pixels.";
+
+}
+
+
+/*
+==================================================
+IMAGE PLUS GRANDE
+==================================================
+*/
+
+function creerImageGrande(
+    largeurFinale,
+    hauteurFinale
+) {
+
+    try {
+
+        canvas.width =
+            largeurFinale;
+
+        canvas.height =
+            hauteurFinale;
+
+
+        contexte.imageSmoothingEnabled =
+            false;
+
+
+        contexte.clearRect(
+            0,
+            0,
+            largeurFinale,
+            hauteurFinale
+        );
+
+
+        /*
+         * IMPORTANT :
+         *
+         * false = nearest-neighbor.
+         *
+         * Les pixels ne sont donc pas
+         * floutés lors de l'agrandissement.
+         */
+
+        contexte.drawImage(
+            image,
+            0,
+            0,
+            largeurFinale,
+            hauteurFinale
+        );
+
+
+        /*
+         * Petit aperçu uniquement.
+         */
+
+        afficherApercu();
+
+
+        preparerPNG();
+
+
+        creerSVG(
+            largeurFinale,
+            hauteurFinale
+        );
+
+
+        infos.textContent =
+            "Image agrandie : " +
+            largeurFinale +
+            " × " +
+            hauteurFinale +
+            " pixels.";
+
+    }
+
+    catch (erreur) {
+
+        /*
+         * Le navigateur peut refuser
+         * un Canvas trop grand.
+         */
+
+        afficherAucuneApercu(
+            largeurFinale,
+            hauteurFinale
+        );
+
+
+        creerSVG(
+            largeurFinale,
+            hauteurFinale
+        );
+
+    }
+
+}
+
+
+/*
+==================================================
+APERÇU
+==================================================
+*/
+
+function afficherApercu() {
+
+    const largeurCanvas =
+        canvas.width;
+
+    const hauteurCanvas =
+        canvas.height;
 
 
     if (
-        isNaN(x) ||
-        isNaN(y) ||
-        x < 1 ||
-        y < 1
+        largeurCanvas >
+        LIMITE_APERCU ||
+
+        hauteurCanvas >
+        LIMITE_APERCU
     ) {
 
-        alert(
-            "X et Y doivent être des nombres supérieurs à 0."
+        afficherAucuneApercu(
+            largeurCanvas,
+            hauteurCanvas
         );
 
         return;
     }
 
 
+    zoneApercu.style.display =
+        "block";
+
+    canvas.style.display =
+        "inline-block";
+
+    message.style.display =
+        "none";
+
+}
+
+
+/*
+==================================================
+PAS D'APERÇU
+==================================================
+*/
+
+function afficherAucuneApercu(
+    largeurFinale,
+    hauteurFinale
+) {
+
+    canvas.style.display =
+        "none";
+
+    message.style.display =
+        "block";
+
+
+    message.innerHTML =
+        "👻 <b>Aperçu désactivé</b><br><br>" +
+
+        "L'image fait <b>" +
+        largeurFinale +
+        " × " +
+        hauteurFinale +
+        "</b> pixels." +
+
+        "<br><br>" +
+
+        "Elle est trop grande pour être affichée " +
+        "correctement dans le navigateur." +
+
+        "<br><br>" +
+
+        "Tu peux quand même utiliser " +
+        "le téléchargement disponible ci-dessous.";
+
+}
+
+
+/*
+==================================================
+PNG
+==================================================
+*/
+
+function preparerPNG() {
+
+    canvas.toBlob(
+        function (blob) {
+
+            if (!blob) {
+                return;
+            }
+
+
+            if (
+                telechargerPNG.dataset.url
+            ) {
+
+                URL.revokeObjectURL(
+                    telechargerPNG.dataset.url
+                );
+
+            }
+
+
+            const url =
+                URL.createObjectURL(blob);
+
+
+            telechargerPNG.href =
+                url;
+
+
+            telechargerPNG.dataset.url =
+                url;
+
+
+            telechargerPNG.style.display =
+                "block";
+
+        },
+
+        "image/png"
+    );
+
+}
+
+
+/*
+==================================================
+SVG GÉANT
+==================================================
+*/
+
+/*
+ * Le SVG permet de représenter une image
+ * à une dimension gigantesque sans créer
+ * un Canvas gigantesque.
+ */
+
+function creerSVG(
+    largeurFinale,
+    hauteurFinale
+) {
+
     /*
-     * On limite les valeurs pour éviter
-     * de demander trop de calculs.
+     * On utilise l'image originale
+     * directement dans le SVG.
+     *
+     * "pixelated" évite le flou.
      */
 
-    x = Math.min(x, 500);
-    y = Math.min(y, 500);
+    const imageSVG =
+        `
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            width="${largeurFinale}"
+            height="${hauteurFinale}"
+            viewBox="0 0 ${largeurFinale} ${hauteurFinale}"
+        >
+
+            <image
+                x="0"
+                y="0"
+                width="${largeurFinale}"
+                height="${hauteurFinale}"
+                preserveAspectRatio="none"
+                style="image-rendering:pixelated"
+                href="${urlImage}"
+            />
+
+        </svg>
+        `;
 
 
-    pixelX.value = x;
-    pixelY.value = y;
-
-
-    /*
-    ==================================================
-    ÉTAPE 1
-    ==================================================
-
-    Le canvas garde EXACTEMENT la taille
-    de l'image originale.
-
-    Exemple :
-
-    Image = 800 × 600
-
-    X = 4
-    Y = 4
-
-    Canvas final = 800 × 600
-
-    */
-
-    canvas.width =
-        image.naturalWidth;
-
-    canvas.height =
-        image.naturalHeight;
-
-
-    /*
-    ==================================================
-    ÉTAPE 2
-    ==================================================
-
-    On dessine d'abord l'image originale.
-    */
-
-    contexte.imageSmoothingEnabled = false;
-
-    contexte.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-
-    contexte.drawImage(
-        image,
-        0,
-        0
-    );
-
-
-    /*
-    ==================================================
-    ÉTAPE 3
-    ==================================================
-
-    On récupère tous les pixels.
-
-    */
-
-    const donnees =
-        contexte.getImageData(
-            0,
-            0,
-            canvas.width,
-            canvas.height
+    const blob =
+        new Blob(
+            [imageSVG],
+            {
+                type:
+                    "image/svg+xml"
+            }
         );
 
 
-    const pixels =
-        donnees.data;
+    const url =
+        URL.createObjectURL(blob);
 
 
-    /*
-    ==================================================
-    ÉTAPE 4
-    ==================================================
-
-    On parcourt l'image par blocs.
-
-    Exemple X=4 Y=4 :
-
-        ┌────┬────┬────┐
-        │████│████│████│
-        │████│████│████│
-        │████│████│████│
-        │████│████│████│
-        └────┴────┴────┘
-
-    Chaque bloc reçoit la couleur moyenne
-    de ses pixels.
-    */
-
-    for (
-        let debutY = 0;
-        debutY < canvas.height;
-        debutY += y
+    if (
+        telechargerSVG.dataset.url
     ) {
 
-        for (
-            let debutX = 0;
-            debutX < canvas.width;
-            debutX += x
-        ) {
-
-
-            let totalR = 0;
-            let totalG = 0;
-            let totalB = 0;
-            let totalA = 0;
-
-            let nombrePixels = 0;
-
-
-            /*
-             * Calcul de la couleur moyenne
-             * du bloc.
-             */
-
-            for (
-                let py = debutY;
-                py < debutY + y &&
-                py < canvas.height;
-                py++
-            ) {
-
-                for (
-                    let px = debutX;
-                    px < debutX + x &&
-                    px < canvas.width;
-                    px++
-                ) {
-
-                    const position =
-                        (py * canvas.width + px) * 4;
-
-
-                    totalR +=
-                        pixels[position];
-
-                    totalG +=
-                        pixels[position + 1];
-
-                    totalB +=
-                        pixels[position + 2];
-
-                    totalA +=
-                        pixels[position + 3];
-
-
-                    nombrePixels++;
-
-                }
-
-            }
-
-
-            /*
-             * Couleur moyenne du bloc.
-             */
-
-            const rouge =
-                Math.round(
-                    totalR / nombrePixels
-                );
-
-            const vert =
-                Math.round(
-                    totalG / nombrePixels
-                );
-
-            const bleu =
-                Math.round(
-                    totalB / nombrePixels
-                );
-
-            const alpha =
-                Math.round(
-                    totalA / nombrePixels
-                );
-
-
-            /*
-             * On donne cette couleur
-             * à TOUS les pixels du bloc.
-             */
-
-            for (
-                let py = debutY;
-                py < debutY + y &&
-                py < canvas.height;
-                py++
-            ) {
-
-                for (
-                    let px = debutX;
-                    px < debutX + x &&
-                    px < canvas.width;
-                    px++
-                ) {
-
-                    const position =
-                        (py * canvas.width + px) * 4;
-
-
-                    pixels[position] =
-                        rouge;
-
-                    pixels[position + 1] =
-                        vert;
-
-                    pixels[position + 2] =
-                        bleu;
-
-                    pixels[position + 3] =
-                        alpha;
-
-                }
-
-            }
-
-        }
+        URL.revokeObjectURL(
+            telechargerSVG.dataset.url
+        );
 
     }
 
 
-    /*
-    ==================================================
-    ÉTAPE 5
-    ==================================================
-
-    On remet les pixels modifiés dans le canvas.
-    */
-
-    contexte.putImageData(
-        donnees,
-        0,
-        0
-    );
+    telechargerSVG.href =
+        url;
 
 
-    informations.textContent =
-        "Image finale : " +
-        canvas.width +
-        " × " +
-        canvas.height +
-        " pixels — blocs de " +
-        x +
-        " × " +
-        y +
-        " pixels";
+    telechargerSVG.dataset.url =
+        url;
 
 
-    preparerTelechargement();
-
+    telechargerSVG.style.display =
+        "block";
 }
 
 
 /*
 ==================================================
-TÉLÉCHARGEMENT
-==================================================
-*/
-
-function preparerTelechargement() {
-
-    canvas.toBlob(function (blob) {
-
-        if (!blob) {
-            return;
-        }
-
-
-        if (telecharger.dataset.url) {
-
-            URL.revokeObjectURL(
-                telecharger.dataset.url
-            );
-
-        }
-
-
-        const url =
-            URL.createObjectURL(blob);
-
-
-        telecharger.href = url;
-
-        telecharger.dataset.url =
-            url;
-
-        telecharger.style.display =
-            "block";
-
-    }, "image/png");
-
-}
-
-
-/*
-==================================================
-RÉINITIALISER
+RÉINITIALISATION
 ==================================================
 */
 
@@ -772,47 +1148,64 @@ reinitialiser.addEventListener(
     "click",
     function () {
 
-        pixelX.value = 4;
-        pixelY.value = 4;
-
-        verrou.checked = true;
-
-
-        if (image) {
-
-            canvas.width =
-                image.naturalWidth;
-
-            canvas.height =
-                image.naturalHeight;
-
-
-            contexte.clearRect(
-                0,
-                0,
-                canvas.width,
-                canvas.height
-            );
-
-
-            contexte.drawImage(
-                image,
-                0,
-                0
-            );
-
-
-            informations.textContent =
-                "Image : " +
-                image.naturalWidth +
-                " × " +
-                image.naturalHeight +
-                " pixels";
-
-
-            preparerTelechargement();
-
+        if (!image) {
+            return;
         }
+
+
+        largeur.value =
+            image.naturalWidth;
+
+        hauteur.value =
+            image.naturalHeight;
+
+
+        mode.value =
+            "petit";
+
+
+        verrou.checked =
+            true;
+
+
+        canvas.style.display =
+            "inline-block";
+
+        message.style.display =
+            "none";
+
+
+        canvas.width =
+            image.naturalWidth;
+
+        canvas.height =
+            image.naturalHeight;
+
+
+        contexte.imageSmoothingEnabled =
+            false;
+
+
+        contexte.drawImage(
+            image,
+            0,
+            0
+        );
+
+
+        telechargerPNG.style.display =
+            "none";
+
+        telechargerSVG.style.display =
+            "none";
+
+
+        infos.textContent =
+            "Image originale : " +
+            image.naturalWidth +
+            " × " +
+            image.naturalHeight +
+            " pixels";
 
     }
 );
