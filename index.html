@@ -1,197 +1,249 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Générateur d'image géante</title>
+<title>Générateur d'images géantes</title>
 
 <style>
-    * {
-        box-sizing: border-box;
-    }
 
-    body {
-        margin: 0;
-        min-height: 100vh;
-        padding: 25px;
+* {
+    box-sizing: border-box;
+}
 
-        background: #101010;
-        color: white;
+body {
+    margin: 0;
+    min-height: 100vh;
 
-        font-family: Arial, sans-serif;
-    }
+    padding: 25px;
 
-    .conteneur {
-        width: 100%;
-        max-width: 900px;
+    background: #101010;
+    color: white;
 
-        margin: auto;
-        padding: 25px;
+    font-family: Arial, sans-serif;
+}
 
-        background: #202020;
-        border-radius: 18px;
-    }
+.conteneur {
+    width: 100%;
+    max-width: 900px;
 
-    h1 {
-        text-align: center;
-        margin-top: 0;
-    }
+    margin: auto;
+    padding: 25px;
 
-    .bloc {
-        margin-top: 18px;
-        padding: 18px;
+    background: #202020;
+    border-radius: 18px;
+}
 
-        background: #2b2b2b;
-        border-radius: 12px;
-    }
+h1 {
+    text-align: center;
+    margin-top: 0;
+}
 
-    .ligne {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
+.bloc {
+    margin-top: 18px;
+    padding: 18px;
 
-        gap: 12px;
-    }
+    background: #2b2b2b;
 
-    input[type="number"] {
-        width: 120px;
+    border-radius: 12px;
+}
 
-        padding: 10px;
+.ligne {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
 
-        border: none;
-        border-radius: 7px;
+    gap: 12px;
+}
 
-        font-size: 16px;
-    }
+input[type="number"] {
+    width: 125px;
 
-    input[type="file"] {
-        max-width: 100%;
-    }
+    padding: 10px;
 
-    select {
-        padding: 10px;
+    border: none;
+    border-radius: 7px;
 
-        border: none;
-        border-radius: 7px;
+    font-size: 16px;
+}
 
-        font-size: 15px;
-    }
+input[type="file"] {
+    max-width: 100%;
+}
 
-    button,
-    .telechargement {
-        padding: 11px 17px;
+select {
+    padding: 10px;
 
-        border: none;
-        border-radius: 8px;
+    border: none;
+    border-radius: 7px;
 
-        background: white;
-        color: black;
+    font-size: 15px;
+}
 
-        font-weight: bold;
+button,
+.telechargement {
+    padding: 11px 17px;
 
-        cursor: pointer;
-        text-decoration: none;
-    }
+    border: none;
+    border-radius: 8px;
 
-    button:hover,
-    .telechargement:hover {
-        background: #ddd;
-    }
+    background: white;
+    color: black;
 
-    .case {
-        display: flex;
-        align-items: center;
-        gap: 7px;
-    }
+    font-weight: bold;
 
-    .description {
-        color: #aaa;
-        line-height: 1.5;
-        font-size: 14px;
-    }
+    cursor: pointer;
 
-    #infos {
-        margin: 20px 0;
+    text-decoration: none;
+}
 
-        text-align: center;
+button:hover,
+.telechargement:hover {
+    background: #ddd;
+}
 
-        color: #bbb;
-    }
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
 
-    .apercu {
-        margin-top: 20px;
+.case {
+    display: flex;
+    align-items: center;
 
-        padding: 20px;
+    gap: 7px;
+}
 
-        max-height: 600px;
-        overflow: auto;
+.description {
+    color: #aaa;
 
-        text-align: center;
+    line-height: 1.5;
 
-        border-radius: 12px;
+    font-size: 14px;
+}
 
-        background:
-            repeating-conic-gradient(
-                #333 0% 25%,
-                #222 0% 50%
-            ) 50% / 20px 20px;
-    }
+#infos {
+    margin: 10px 0;
 
-    #canvas {
-        max-width: 100%;
-        height: auto;
+    text-align: center;
 
-        border: 2px solid white;
+    color: #bbb;
 
-        image-rendering: pixelated;
-        image-rendering: crisp-edges;
-    }
+    line-height: 1.5;
+}
 
-    #message {
-        display: none;
+.apercu {
+    margin-top: 20px;
 
-        padding: 20px;
+    padding: 20px;
 
-        background: #181818;
+    max-height: 600px;
 
-        border-radius: 10px;
+    overflow: auto;
 
-        color: #ccc;
-    }
+    text-align: center;
 
-    .boutons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
+    border-radius: 12px;
 
-    .telechargement {
-        display: none;
+    background:
+        repeating-conic-gradient(
+            #333 0% 25%,
+            #222 0% 50%
+        ) 50% / 20px 20px;
+}
 
-        margin: 20px auto 0;
+#canvas {
+    max-width: 100%;
+    height: auto;
 
-        width: max-content;
-    }
+    border: 2px solid white;
 
-    .danger {
-        color: #ffb0b0;
-    }
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+#message {
+    display: none;
+
+    padding: 20px;
+
+    background: #181818;
+
+    border-radius: 10px;
+
+    color: #ccc;
+
+    text-align: center;
+
+    line-height: 1.5;
+}
+
+.boutons {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+}
+
+.telechargement {
+    display: none;
+
+    margin: 20px auto 0;
+
+    width: max-content;
+}
+
+.progression {
+    display: none;
+
+    margin-top: 15px;
+
+    width: 100%;
+    height: 10px;
+
+    background: #111;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+.progression-barre {
+    width: 0%;
+    height: 100%;
+
+    background: white;
+
+    transition: width 0.15s;
+}
+
+.erreur {
+    color: #ff9999 !important;
+}
+
+.succes {
+    color: #aaffaa !important;
+}
+
 </style>
 </head>
+
 
 <body>
 
 <div class="conteneur">
 
-    <h1>🖼️ Générateur d'images pixelisées</h1>
+    <h1>🖼️ Générateur d'images géantes</h1>
 
 
     <!-- IMAGE -->
 
     <div class="bloc">
 
-        <h3>1. Image originale</h3>
+        <h3>1. Choisir une image</h3>
 
         <input
             type="file"
@@ -200,7 +252,7 @@
         >
 
         <p class="description">
-            Choisis l'image que tu veux transformer.
+            Choisis l'image que tu veux redimensionner.
         </p>
 
     </div>
@@ -221,11 +273,11 @@
             <select id="mode">
 
                 <option value="petit">
-                    📉 Plus petit que l'original
+                    📉 Plus petit
                 </option>
 
                 <option value="grand">
-                    📈 Plus grand que l'original
+                    📈 Plus grand
                 </option>
 
             </select>
@@ -233,6 +285,7 @@
         </div>
 
         <br>
+
 
         <div class="ligne">
 
@@ -247,6 +300,7 @@
                 >
             </label>
 
+
             <label>
                 Hauteur :
                 <input
@@ -258,6 +312,7 @@
                 >
             </label>
 
+
             <label class="case">
 
                 <input
@@ -266,21 +321,23 @@
                     checked
                 >
 
-                Garder le même rapport
+                Garder les proportions
 
             </label>
 
         </div>
 
+
         <p class="description">
 
-            Tu peux mettre n'importe quelle taille jusqu'à
-            64 000 × 64 000 dans les champs.
+            Tu peux utiliser des tailles très grandes,
+            par exemple <b>10000 × 10000</b> ou
+            <b>64000 × 64000</b>.
 
             <br><br>
 
-            Exemple :
-            <b>64000 × 64000</b>
+            Si le navigateur ne peut pas afficher une image
+            aussi grande, l'aperçu sera automatiquement caché.
 
         </p>
 
@@ -295,7 +352,14 @@
             Aucune image chargée.
         </div>
 
-        <div id="message"></div>
+        <div class="progression" id="progression">
+
+            <div
+                class="progression-barre"
+                id="progressionBarre"
+            ></div>
+
+        </div>
 
     </div>
 
@@ -307,7 +371,7 @@
         <div class="boutons">
 
             <button id="generer">
-                🚀 Générer
+                🚀 Générer le PNG
             </button>
 
             <button id="reinitialiser">
@@ -329,6 +393,8 @@
 
             <canvas id="canvas"></canvas>
 
+            <div id="message"></div>
+
         </div>
 
     </div>
@@ -342,15 +408,6 @@
         download="image_geante.png"
     >
         ⬇️ Télécharger le PNG
-    </a>
-
-
-    <a
-        id="telechargerSVG"
-        class="telechargement"
-        download="image_geante.svg"
-    >
-        ⬇️ Télécharger le SVG géant
     </a>
 
 </div>
@@ -403,124 +460,153 @@ const zoneApercu =
 const telechargerPNG =
     document.getElementById("telechargerPNG");
 
-const telechargerSVG =
-    document.getElementById("telechargerSVG");
+const progression =
+    document.getElementById("progression");
 
+const progressionBarre =
+    document.getElementById("progressionBarre");
+
+
+/*
+==================================================
+VARIABLES
+==================================================
+*/
 
 let image = null;
+
 let urlImage = null;
+
+let urlPNG = null;
 
 let rapportOriginal = 1;
 
 
 /*
 ==================================================
-LIMITES
+LIMITES D'AFFICHAGE
 ==================================================
 */
 
 /*
- * Au-dessus de cette taille, on ne tente PAS
- * d'afficher l'aperçu.
+ * Au-dessus de cette taille,
+ * on ne montre simplement pas
+ * l'aperçu.
+ *
+ * Cela n'empêche PAS la génération
+ * du fichier.
  */
 
 const LIMITE_APERCU = 4096;
 
 
 /*
- * Nombre maximal de pixels pour tenter
- * de fabriquer un PNG avec Canvas.
+ * Nombre de pixels maximal que nous
+ * essayons de mettre dans un Canvas.
  *
- * 25 millions de pixels = environ 100 Mo
- * uniquement pour les données RGBA.
+ * Cela évite de faire planter le navigateur
+ * avec une demande complètement énorme.
  */
 
 const LIMITE_CANVAS =
-    25_000_000;
+    30_000_000;
 
 
 /*
 ==================================================
-CHARGEMENT DE L'IMAGE
+CHARGEMENT
 ==================================================
 */
 
-imageInput.addEventListener("change", function () {
+imageInput.addEventListener(
+    "change",
+    function () {
 
-    const fichier =
-        imageInput.files[0];
-
-    if (!fichier) {
-        return;
-    }
+        const fichier =
+            imageInput.files[0];
 
 
-    if (urlImage) {
-        URL.revokeObjectURL(urlImage);
-    }
+        if (!fichier) {
+            return;
+        }
 
 
-    urlImage =
-        URL.createObjectURL(fichier);
+        /*
+         * Nettoyage de l'ancienne URL.
+         */
 
+        if (urlImage) {
 
-    const nouvelleImage =
-        new Image();
-
-
-    nouvelleImage.onload =
-        function () {
-
-            image =
-                nouvelleImage;
-
-
-            rapportOriginal =
-                image.naturalWidth /
-                image.naturalHeight;
-
-
-            infos.textContent =
-                "Image originale : " +
-                image.naturalWidth +
-                " × " +
-                image.naturalHeight +
-                " pixels";
-
-
-            /*
-             * Met automatiquement une taille
-             * proportionnelle.
-             */
-
-            largeur.value =
-                image.naturalWidth;
-
-            hauteur.value =
-                image.naturalHeight;
-
-        };
-
-
-    nouvelleImage.onerror =
-        function () {
-
-            alert(
-                "Impossible de charger cette image."
+            URL.revokeObjectURL(
+                urlImage
             );
 
-        };
+        }
 
 
-    nouvelleImage.src =
-        urlImage;
+        urlImage =
+            URL.createObjectURL(
+                fichier
+            );
 
-});
+
+        const nouvelleImage =
+            new Image();
+
+
+        nouvelleImage.onload =
+            function () {
+
+                image =
+                    nouvelleImage;
+
+
+                rapportOriginal =
+                    image.naturalWidth /
+                    image.naturalHeight;
+
+
+                largeur.value =
+                    image.naturalWidth;
+
+                hauteur.value =
+                    image.naturalHeight;
+
+
+                afficherInfos(
+                    "Image originale : " +
+                    image.naturalWidth +
+                    " × " +
+                    image.naturalHeight +
+                    " pixels"
+                );
+
+            };
+
+
+        nouvelleImage.onerror =
+            function () {
+
+                image = null;
+
+
+                afficherErreur(
+                    "Impossible de charger cette image."
+                );
+
+            };
+
+
+        nouvelleImage.src =
+            urlImage;
+
+    }
+);
 
 
 /*
 ==================================================
-RAPPORT LARGEUR / HAUTEUR
+PROPORTIONS
 ==================================================
 */
 
@@ -532,28 +618,30 @@ largeur.addEventListener(
             return;
         }
 
-
         if (!image) {
             return;
         }
 
 
-        const nouvelleLargeur =
+        const valeur =
             Number(largeur.value);
 
 
         if (
-            !nouvelleLargeur ||
-            nouvelleLargeur < 1
+            !Number.isFinite(valeur) ||
+            valeur < 1
         ) {
             return;
         }
 
 
         hauteur.value =
-            Math.round(
-                nouvelleLargeur /
-                rapportOriginal
+            Math.max(
+                1,
+                Math.round(
+                    valeur /
+                    rapportOriginal
+                )
             );
 
     }
@@ -568,28 +656,30 @@ hauteur.addEventListener(
             return;
         }
 
-
         if (!image) {
             return;
         }
 
 
-        const nouvelleHauteur =
+        const valeur =
             Number(hauteur.value);
 
 
         if (
-            !nouvelleHauteur ||
-            nouvelleHauteur < 1
+            !Number.isFinite(valeur) ||
+            valeur < 1
         ) {
             return;
         }
 
 
         largeur.value =
-            Math.round(
-                nouvelleHauteur *
-                rapportOriginal
+            Math.max(
+                1,
+                Math.round(
+                    valeur *
+                    rapportOriginal
+                )
             );
 
     }
@@ -604,15 +694,15 @@ GÉNÉRER
 
 generer.addEventListener(
     "click",
-    genererImage
+    genererPNG
 );
 
 
-function genererImage() {
+async function genererPNG() {
 
     if (!image) {
 
-        alert(
+        afficherErreur(
             "Choisis d'abord une image."
         );
 
@@ -632,26 +722,38 @@ function genererImage() {
 
 
     /*
-     * Sécurité.
+     * Vérification des nombres.
+     */
+
+    if (
+        !Number.isFinite(largeurFinale) ||
+        !Number.isFinite(hauteurFinale) ||
+        largeurFinale < 1 ||
+        hauteurFinale < 1
+    ) {
+
+        afficherErreur(
+            "La largeur et la hauteur doivent être valides."
+        );
+
+        return;
+    }
+
+
+    /*
+     * Maximum demandé par l'interface.
      */
 
     largeurFinale =
-        Math.max(
-            1,
-            Math.min(
-                64000,
-                largeurFinale
-            )
+        Math.min(
+            largeurFinale,
+            64000
         );
 
-
     hauteurFinale =
-        Math.max(
-            1,
-            Math.min(
-                64000,
-                hauteurFinale
-            )
+        Math.min(
+            hauteurFinale,
+            64000
         );
 
 
@@ -667,82 +769,149 @@ function genererImage() {
         hauteurFinale;
 
 
-    infos.textContent =
-        "Taille demandée : " +
-        largeurFinale +
-        " × " +
-        hauteurFinale +
-        " pixels";
+    /*
+     * Nettoyage du résultat précédent.
+     */
+
+    supprimerAncienPNG();
 
 
     /*
-     =================================================
-     CAS 1 :
-     PETITE IMAGE
-     =================================================
+     * Pas d'aperçu avant de commencer.
+     */
+
+    cacherApercu();
+
+
+    generer.disabled =
+        true;
+
+
+    progression.style.display =
+        "block";
+
+    progressionBarre.style.width =
+        "5%";
+
+
+    afficherInfos(
+        "Préparation de " +
+        largeurFinale +
+        " × " +
+        hauteurFinale +
+        " pixels..."
+    );
+
+
+    /*
+     * Laisse le navigateur respirer
+     * avant de commencer.
+     */
+
+    await attendre();
+
+
+    /*
+    ==================================================
+    SI L'IMAGE EST PETITE
+    ==================================================
     */
 
     if (
-        mode.value === "petit"
+        nombrePixels <= LIMITE_CANVAS
     ) {
 
-        creerImagePetite(
-            largeurFinale,
-            hauteurFinale
-        );
+        try {
+
+            await creerAvecCanvas(
+                largeurFinale,
+                hauteurFinale
+            );
+
+
+            generer.disabled =
+                false;
+
+            progressionBarre.style.width =
+                "100%";
+
+            return;
+
+        }
+
+        catch (erreur) {
+
+            console.warn(
+                "Canvas impossible :",
+                erreur
+            );
+
+        }
 
     }
 
 
     /*
-     =================================================
-     CAS 2 :
-     GRANDE IMAGE
-     =================================================
+    ==================================================
+    IMAGE TROP GRANDE POUR CANVAS
+    ==================================================
     */
 
-    else {
-
-        /*
-         * Si c'est raisonnable :
-         * création PNG normale.
-         */
-
-        if (
-            nombrePixels <= LIMITE_CANVAS
-        ) {
-
-            creerImageGrande(
-                largeurFinale,
-                hauteurFinale
-            );
-
-        }
-
-        /*
-         * Si c'est énorme :
-         * pas d'aperçu.
-         */
-
-        else {
-
-            afficherAucuneApercu(
-                largeurFinale,
-                hauteurFinale
-            );
+    afficherInfos(
+        "Image trop grande pour l'aperçu. " +
+        "Tentative de création du PNG..."
+    );
 
 
-            /*
-             * On prépare quand même
-             * le SVG géant.
-             */
+    /*
+     * Ici nous tentons quand même
+     * une génération avec Canvas.
+     *
+     * Si le navigateur refuse,
+     * nous affichons clairement le problème.
+     */
 
-            creerSVG(
-                largeurFinale,
-                hauteurFinale
-            );
+    try {
 
-        }
+        await creerAvecCanvas(
+            largeurFinale,
+            hauteurFinale
+        );
+
+
+        generer.disabled =
+            false;
+
+        progressionBarre.style.width =
+            "100%";
+
+    }
+
+    catch (erreur) {
+
+        console.error(erreur);
+
+
+        afficherErreur(
+            "⚠️ Le navigateur refuse de créer " +
+            "un PNG de " +
+            largeurFinale +
+            " × " +
+            hauteurFinale +
+            " pixels. " +
+
+            "<br><br>" +
+
+            "L'image est trop grande pour la mémoire " +
+            "disponible dans ce navigateur."
+        );
+
+
+        generer.disabled =
+            false;
+
+        progression.style.display =
+            "none";
 
     }
 
@@ -751,27 +920,103 @@ function genererImage() {
 
 /*
 ==================================================
-IMAGE PLUS PETITE
+CRÉATION CANVAS
 ==================================================
 */
 
-function creerImagePetite(
+async function creerAvecCanvas(
     largeurFinale,
     hauteurFinale
 ) {
 
-    canvas.width =
+    /*
+     * Vérification rapide de la taille.
+     */
+
+    if (
+        largeurFinale >
+        32767 ||
+
+        hauteurFinale >
+        32767
+    ) {
+
+        throw new Error(
+            "Canvas trop grand pour ce navigateur."
+        );
+
+    }
+
+
+    /*
+     * Création du Canvas.
+     */
+
+    const nouveauCanvas =
+        document.createElement(
+            "canvas"
+        );
+
+
+    nouveauCanvas.width =
         largeurFinale;
 
-    canvas.height =
+    nouveauCanvas.height =
         hauteurFinale;
 
 
-    contexte.imageSmoothingEnabled =
+    /*
+     * Vérification que le navigateur
+     * a réellement accepté les dimensions.
+     */
+
+    if (
+        nouveauCanvas.width !==
+        largeurFinale ||
+
+        nouveauCanvas.height !==
+        hauteurFinale
+    ) {
+
+        throw new Error(
+            "Le navigateur a refusé les dimensions."
+        );
+
+    }
+
+
+    const ctx =
+        nouveauCanvas.getContext(
+            "2d",
+            {
+                alpha: true
+            }
+        );
+
+
+    if (!ctx) {
+
+        throw new Error(
+            "Impossible de créer le contexte Canvas."
+        );
+
+    }
+
+
+    /*
+     * Très important :
+     *
+     * false = pas de lissage.
+     *
+     * Les pixels restent durs
+     * lors d'un agrandissement.
+     */
+
+    ctx.imageSmoothingEnabled =
         false;
 
 
-    contexte.clearRect(
+    ctx.clearRect(
         0,
         0,
         largeurFinale,
@@ -779,12 +1024,18 @@ function creerImagePetite(
     );
 
 
+    progressionBarre.style.width =
+        "30%";
+
+
+    await attendre();
+
+
     /*
-     * Pour une image plus petite,
-     * on réduit l'image.
+     * Dessin de l'image.
      */
 
-    contexte.drawImage(
+    ctx.drawImage(
         image,
         0,
         0,
@@ -793,45 +1044,46 @@ function creerImagePetite(
     );
 
 
-    afficherApercu();
+    progressionBarre.style.width =
+        "70%";
 
 
-    preparerPNG();
+    await attendre();
 
 
     /*
-     * On peut également faire
-     * une version SVG.
+     * Transformation du Canvas
+     * en PNG.
      */
 
-    creerSVG(
-        largeurFinale,
-        hauteurFinale
-    );
+    const blob =
+        await canvasVersPNG(
+            nouveauCanvas
+        );
 
 
-    infos.textContent =
-        "Image créée : " +
-        largeurFinale +
-        " × " +
-        hauteurFinale +
-        " pixels.";
+    if (!blob) {
 
-}
+        throw new Error(
+            "Le navigateur n'a pas pu créer le PNG."
+        );
+
+    }
 
 
-/*
-==================================================
-IMAGE PLUS GRANDE
-==================================================
-*/
+    progressionBarre.style.width =
+        "90%";
 
-function creerImageGrande(
-    largeurFinale,
-    hauteurFinale
-) {
 
-    try {
+    /*
+     * Le Canvas sert maintenant seulement
+     * pour l'aperçu si l'image est raisonnable.
+     */
+
+    if (
+        largeurFinale <= LIMITE_APERCU &&
+        hauteurFinale <= LIMITE_APERCU
+    ) {
 
         canvas.width =
             largeurFinale;
@@ -839,10 +1091,8 @@ function creerImageGrande(
         canvas.height =
             hauteurFinale;
 
-
         contexte.imageSmoothingEnabled =
             false;
-
 
         contexte.clearRect(
             0,
@@ -851,69 +1101,162 @@ function creerImageGrande(
             hauteurFinale
         );
 
-
-        /*
-         * IMPORTANT :
-         *
-         * false = nearest-neighbor.
-         *
-         * Les pixels ne sont donc pas
-         * floutés lors de l'agrandissement.
-         */
-
         contexte.drawImage(
-            image,
+            nouveauCanvas,
             0,
-            0,
-            largeurFinale,
-            hauteurFinale
+            0
         );
 
 
-        /*
-         * Petit aperçu uniquement.
-         */
-
-        afficherApercu();
-
-
-        preparerPNG();
-
-
-        creerSVG(
-            largeurFinale,
-            hauteurFinale
-        );
-
-
-        infos.textContent =
-            "Image agrandie : " +
-            largeurFinale +
-            " × " +
-            hauteurFinale +
-            " pixels.";
+        canvas.style.display =
+            "inline-block";
 
     }
 
-    catch (erreur) {
 
-        /*
-         * Le navigateur peut refuser
-         * un Canvas trop grand.
-         */
+    /*
+     * Création du lien PNG.
+     */
 
-        afficherAucuneApercu(
-            largeurFinale,
-            hauteurFinale
+    urlPNG =
+        URL.createObjectURL(
+            blob
         );
 
 
-        creerSVG(
-            largeurFinale,
-            hauteurFinale
-        );
+    telechargerPNG.href =
+        urlPNG;
 
-    }
+
+    telechargerPNG.style.display =
+        "block";
+
+
+    afficherSucces(
+        "✅ PNG créé : " +
+        largeurFinale +
+        " × " +
+        hauteurFinale +
+        " pixels."
+    );
+
+
+    progressionBarre.style.width =
+        "100%";
+
+
+    setTimeout(
+        function () {
+
+            progression.style.display =
+                "none";
+
+        },
+        500
+    );
+
+}
+
+
+/*
+==================================================
+CANVAS → PNG
+==================================================
+*/
+
+function canvasVersPNG(
+    canvasSource
+) {
+
+    return new Promise(
+        function (resolve, reject) {
+
+            /*
+             * Timeout de sécurité.
+             */
+
+            let termine =
+                false;
+
+
+            const timer =
+                setTimeout(
+                    function () {
+
+                        if (!termine) {
+
+                            termine = true;
+
+                            reject(
+                                new Error(
+                                    "La création du PNG prend trop de temps."
+                                )
+                            );
+
+                        }
+
+                    },
+                    120000
+                );
+
+
+            try {
+
+                canvasSource.toBlob(
+                    function (blob) {
+
+                        if (termine) {
+                            return;
+                        }
+
+
+                        termine = true;
+
+                        clearTimeout(
+                            timer
+                        );
+
+
+                        if (!blob) {
+
+                            reject(
+                                new Error(
+                                    "PNG vide."
+                                )
+                            );
+
+                            return;
+                        }
+
+
+                        resolve(blob);
+
+                    },
+                    "image/png"
+                );
+
+            }
+
+            catch (erreur) {
+
+                if (!termine) {
+
+                    termine = true;
+
+                    clearTimeout(
+                        timer
+                    );
+
+                    reject(
+                        erreur
+                    );
+
+                }
+
+            }
+
+        }
+    );
 
 }
 
@@ -924,223 +1267,124 @@ APERÇU
 ==================================================
 */
 
+function cacherApercu() {
+
+    canvas.style.display =
+        "none";
+
+    message.style.display =
+        "none";
+
+}
+
+
 function afficherApercu() {
 
-    const largeurCanvas =
-        canvas.width;
-
-    const hauteurCanvas =
-        canvas.height;
-
-
     if (
-        largeurCanvas >
-        LIMITE_APERCU ||
+        canvas.width <=
+        LIMITE_APERCU &&
 
-        hauteurCanvas >
+        canvas.height <=
         LIMITE_APERCU
     ) {
 
-        afficherAucuneApercu(
-            largeurCanvas,
-            hauteurCanvas
-        );
+        canvas.style.display =
+            "inline-block";
 
-        return;
+        message.style.display =
+            "none";
+
     }
 
+    else {
 
-    zoneApercu.style.display =
-        "block";
+        cacherApercu();
 
-    canvas.style.display =
-        "inline-block";
+        message.style.display =
+            "block";
 
-    message.style.display =
-        "none";
+        message.innerHTML =
+            "👻 <b>Aperçu désactivé</b><br><br>" +
 
-}
+            "L'image est trop grande pour être " +
+            "affichée correctement dans le navigateur.";
 
-
-/*
-==================================================
-PAS D'APERÇU
-==================================================
-*/
-
-function afficherAucuneApercu(
-    largeurFinale,
-    hauteurFinale
-) {
-
-    canvas.style.display =
-        "none";
-
-    message.style.display =
-        "block";
-
-
-    message.innerHTML =
-        "👻 <b>Aperçu désactivé</b><br><br>" +
-
-        "L'image fait <b>" +
-        largeurFinale +
-        " × " +
-        hauteurFinale +
-        "</b> pixels." +
-
-        "<br><br>" +
-
-        "Elle est trop grande pour être affichée " +
-        "correctement dans le navigateur." +
-
-        "<br><br>" +
-
-        "Tu peux quand même utiliser " +
-        "le téléchargement disponible ci-dessous.";
+    }
 
 }
 
 
 /*
 ==================================================
-PNG
+MESSAGES
 ==================================================
 */
 
-function preparerPNG() {
+function afficherInfos(texte) {
 
-    canvas.toBlob(
-        function (blob) {
+    infos.className = "";
 
-            if (!blob) {
-                return;
-            }
+    infos.innerHTML =
+        texte;
 
-
-            if (
-                telechargerPNG.dataset.url
-            ) {
-
-                URL.revokeObjectURL(
-                    telechargerPNG.dataset.url
-                );
-
-            }
+}
 
 
-            const url =
-                URL.createObjectURL(blob);
+function afficherErreur(texte) {
+
+    infos.className =
+        "erreur";
+
+    infos.innerHTML =
+        texte;
+
+}
 
 
-            telechargerPNG.href =
-                url;
+function afficherSucces(texte) {
 
+    infos.className =
+        "succes";
 
-            telechargerPNG.dataset.url =
-                url;
-
-
-            telechargerPNG.style.display =
-                "block";
-
-        },
-
-        "image/png"
-    );
+    infos.innerHTML =
+        texte;
 
 }
 
 
 /*
 ==================================================
-SVG GÉANT
+SUPPRESSION ANCIEN PNG
 ==================================================
 */
 
-/*
- * Le SVG permet de représenter une image
- * à une dimension gigantesque sans créer
- * un Canvas gigantesque.
- */
+function supprimerAncienPNG() {
 
-function creerSVG(
-    largeurFinale,
-    hauteurFinale
-) {
-
-    /*
-     * On utilise l'image originale
-     * directement dans le SVG.
-     *
-     * "pixelated" évite le flou.
-     */
-
-    const imageSVG =
-        `
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            width="${largeurFinale}"
-            height="${hauteurFinale}"
-            viewBox="0 0 ${largeurFinale} ${hauteurFinale}"
-        >
-
-            <image
-                x="0"
-                y="0"
-                width="${largeurFinale}"
-                height="${hauteurFinale}"
-                preserveAspectRatio="none"
-                style="image-rendering:pixelated"
-                href="${urlImage}"
-            />
-
-        </svg>
-        `;
-
-
-    const blob =
-        new Blob(
-            [imageSVG],
-            {
-                type:
-                    "image/svg+xml"
-            }
-        );
-
-
-    const url =
-        URL.createObjectURL(blob);
-
-
-    if (
-        telechargerSVG.dataset.url
-    ) {
+    if (urlPNG) {
 
         URL.revokeObjectURL(
-            telechargerSVG.dataset.url
+            urlPNG
         );
+
+        urlPNG = null;
 
     }
 
 
-    telechargerSVG.href =
-        url;
+    telechargerPNG.removeAttribute(
+        "href"
+    );
 
 
-    telechargerSVG.dataset.url =
-        url;
+    telechargerPNG.style.display =
+        "none";
 
-
-    telechargerSVG.style.display =
-        "block";
 }
 
 
 /*
 ==================================================
-RÉINITIALISATION
+RÉINITIALISER
 ==================================================
 */
 
@@ -1148,8 +1392,28 @@ reinitialiser.addEventListener(
     "click",
     function () {
 
+        supprimerAncienPNG();
+
+
         if (!image) {
+
+            largeur.value =
+                128;
+
+            hauteur.value =
+                128;
+
+            mode.value =
+                "petit";
+
+            cacherApercu();
+
+            afficherInfos(
+                "Aucune image chargée."
+            );
+
             return;
+
         }
 
 
@@ -1168,44 +1432,120 @@ reinitialiser.addEventListener(
             true;
 
 
-        canvas.style.display =
-            "inline-block";
+        /*
+         * Remet l'image originale
+         * dans l'aperçu si possible.
+         */
 
-        message.style.display =
-            "none";
+        if (
+            image.naturalWidth <=
+            LIMITE_APERCU &&
 
+            image.naturalHeight <=
+            LIMITE_APERCU
+        ) {
 
-        canvas.width =
-            image.naturalWidth;
+            canvas.width =
+                image.naturalWidth;
 
-        canvas.height =
-            image.naturalHeight;
-
-
-        contexte.imageSmoothingEnabled =
-            false;
-
-
-        contexte.drawImage(
-            image,
-            0,
-            0
-        );
+            canvas.height =
+                image.naturalHeight;
 
 
-        telechargerPNG.style.display =
-            "none";
-
-        telechargerSVG.style.display =
-            "none";
+            contexte.imageSmoothingEnabled =
+                false;
 
 
-        infos.textContent =
+            contexte.clearRect(
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+
+            contexte.drawImage(
+                image,
+                0,
+                0
+            );
+
+
+            canvas.style.display =
+                "inline-block";
+
+            message.style.display =
+                "none";
+
+        }
+
+        else {
+
+            cacherApercu();
+
+        }
+
+
+        afficherInfos(
             "Image originale : " +
             image.naturalWidth +
             " × " +
             image.naturalHeight +
-            " pixels";
+            " pixels"
+        );
+
+    }
+);
+
+
+/*
+==================================================
+PETITE PAUSE
+==================================================
+*/
+
+function attendre() {
+
+    return new Promise(
+        function (resolve) {
+
+            setTimeout(
+                resolve,
+                20
+            );
+
+        }
+    );
+
+}
+
+
+/*
+==================================================
+NETTOYAGE EN QUITTANT LA PAGE
+==================================================
+*/
+
+window.addEventListener(
+    "beforeunload",
+    function () {
+
+        if (urlImage) {
+
+            URL.revokeObjectURL(
+                urlImage
+            );
+
+        }
+
+
+        if (urlPNG) {
+
+            URL.revokeObjectURL(
+                urlPNG
+            );
+
+        }
 
     }
 );
