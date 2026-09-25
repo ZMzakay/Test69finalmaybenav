@@ -1,202 +1,163 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Éditeur de pixels</title>
+<title>Pixeliseur X × Y</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<style>
+    * {
+        box-sizing: border-box;
+    }
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background: #111;
-            color: white;
-            font-family: Arial, sans-serif;
-            padding: 25px;
-        }
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background: #111;
+        color: white;
+        font-family: Arial, sans-serif;
+        padding: 25px;
+    }
 
-        .conteneur {
-            max-width: 900px;
-            margin: auto;
-            background: #202020;
-            padding: 25px;
-            border-radius: 18px;
-        }
+    .conteneur {
+        width: 100%;
+        max-width: 900px;
+        margin: auto;
+        background: #202020;
+        border-radius: 18px;
+        padding: 25px;
+    }
 
-        h1 {
-            text-align: center;
-            margin-top: 0;
-        }
+    h1 {
+        text-align: center;
+        margin-top: 0;
+    }
 
-        .groupe {
-            background: #2b2b2b;
-            padding: 15px;
-            border-radius: 12px;
-            margin-top: 15px;
-        }
+    .bloc {
+        background: #2b2b2b;
+        border-radius: 12px;
+        padding: 18px;
+        margin-top: 15px;
+    }
 
-        .ligne {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
+    .ligne {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
 
-        label {
-            font-weight: bold;
-        }
+    input[type="number"] {
+        width: 90px;
+        padding: 9px;
+        border: none;
+        border-radius: 7px;
+        font-size: 16px;
+    }
 
-        input[type="number"] {
-            width: 90px;
-            padding: 9px;
-            border: none;
-            border-radius: 7px;
-            font-size: 16px;
-        }
+    input[type="file"] {
+        max-width: 100%;
+    }
 
-        input[type="file"] {
-            max-width: 100%;
-        }
+    button,
+    .telecharger {
+        border: none;
+        border-radius: 8px;
+        padding: 10px 16px;
+        background: white;
+        color: black;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+    }
 
-        select {
-            padding: 9px;
-            border-radius: 7px;
-            border: none;
-            font-size: 15px;
-        }
+    button:hover,
+    .telecharger:hover {
+        background: #ddd;
+    }
 
-        button,
-        .telecharger {
-            padding: 10px 16px;
-            border: none;
-            border-radius: 8px;
-            background: white;
-            color: black;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-        }
+    .case {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
 
-        button:hover,
-        .telecharger:hover {
-            background: #ddd;
-        }
+    .description {
+        color: #aaa;
+        line-height: 1.5;
+        font-size: 14px;
+    }
 
-        .case {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-        }
+    #informations {
+        text-align: center;
+        color: #bbb;
+        margin: 20px 0;
+    }
 
-        .apercu {
-            margin-top: 20px;
-            padding: 20px;
+    .apercu {
+        width: 100%;
+        max-height: 600px;
+        overflow: auto;
+        padding: 20px;
+        text-align: center;
+        border-radius: 12px;
 
-            background:
-                repeating-conic-gradient(
-                    #333 0% 25%,
-                    #222 0% 50%
-                ) 50% / 20px 20px;
+        background:
+            repeating-conic-gradient(
+                #333 0% 25%,
+                #222 0% 50%
+            ) 50% / 20px 20px;
+    }
 
-            border-radius: 12px;
-            overflow: auto;
-            text-align: center;
-        }
+    canvas {
+        max-width: 100%;
+        height: auto;
+        border: 2px solid white;
 
-        canvas {
-            max-width: 100%;
-            height: auto;
+        /*
+         * Permet de garder les pixels
+         * nets lorsqu'on zoome.
+         */
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+    }
 
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
-
-            border: 2px solid white;
-        }
-
-        #informations {
-            color: #bbb;
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        #telecharger {
-            display: none;
-            margin: 20px auto 0;
-            width: max-content;
-        }
-
-        .explication {
-            color: #bbb;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-    </style>
+    #telecharger {
+        display: none;
+        margin: 20px auto 0;
+        width: max-content;
+    }
+</style>
 </head>
 
 <body>
 
 <div class="conteneur">
 
-    <h1>🖼️ Éditeur de pixels</h1>
+    <h1>🖼️ Pixeliseur X × Y</h1>
+
 
     <!-- IMAGE -->
 
-    <div class="groupe">
+    <div class="bloc">
 
         <h3>1. Choisir une image</h3>
 
         <input
             type="file"
-            id="image"
+            id="imageInput"
             accept="image/png,image/jpeg,image/webp"
         >
 
     </div>
 
 
-    <!-- MODE -->
+    <!-- TAILLE DES BLOCS -->
 
-    <div class="groupe">
+    <div class="bloc">
 
-        <h3>2. Que veux-tu faire ?</h3>
-
-        <select id="mode">
-
-            <option value="agrandir">
-                Agrandir les pixels
-            </option>
-
-            <option value="reduire">
-                Réduire les pixels
-            </option>
-
-        </select>
-
-        <p class="explication">
-
-            <b>Agrandir :</b>
-            chaque pixel de l'image est répété plusieurs fois.
-
-            <br>
-
-            <b>Réduire :</b>
-            plusieurs pixels sont regroupés pour créer un pixel.
-
-        </p>
-
-    </div>
-
-
-    <!-- X / Y -->
-
-    <div class="groupe">
-
-        <h3>3. Taille X × Y</h3>
+        <h3>2. Taille des pixels</h3>
 
         <div class="ligne">
 
@@ -204,23 +165,25 @@
                 X :
                 <input
                     type="number"
-                    id="x"
-                    value="2"
+                    id="pixelX"
+                    value="4"
                     min="1"
-                    max="100"
+                    max="500"
                 >
             </label>
+
 
             <label>
                 Y :
                 <input
                     type="number"
-                    id="y"
-                    value="2"
+                    id="pixelY"
+                    value="4"
                     min="1"
-                    max="100"
+                    max="500"
                 >
             </label>
+
 
             <label class="case">
 
@@ -230,15 +193,25 @@
                     checked
                 >
 
-                Garder X et Y identiques
+                X = Y
 
             </label>
 
         </div>
 
-        <p class="explication">
-            X contrôle la largeur de chaque pixel.
-            Y contrôle sa hauteur.
+
+        <p class="description">
+
+            X = largeur du bloc de pixels.<br>
+            Y = hauteur du bloc de pixels.<br><br>
+
+            Exemple : X = 4 et Y = 4 signifie qu'une
+            zone de 4×4 pixels devient une seule couleur.
+
+            <br><br>
+
+            ⚠️ La taille finale de l'image ne change pas.
+
         </p>
 
     </div>
@@ -246,7 +219,7 @@
 
     <!-- BOUTONS -->
 
-    <div class="groupe">
+    <div class="bloc">
 
         <div class="ligne">
 
@@ -284,7 +257,7 @@
     <a
         id="telecharger"
         class="telecharger"
-        download="image-modifiee.png"
+        download="image-pixelisee.png"
     >
         ⬇️ Télécharger l'image
     </a>
@@ -294,20 +267,35 @@
 
 <script>
 
-const inputImage = document.getElementById("image");
+/*
+==================================================
+ÉLÉMENTS
+==================================================
+*/
 
-const inputX = document.getElementById("x");
-const inputY = document.getElementById("y");
+const imageInput =
+    document.getElementById("imageInput");
 
-const verrou = document.getElementById("verrou");
+const pixelX =
+    document.getElementById("pixelX");
 
-const mode = document.getElementById("mode");
+const pixelY =
+    document.getElementById("pixelY");
 
-const appliquer = document.getElementById("appliquer");
-const reinitialiser = document.getElementById("reinitialiser");
+const verrou =
+    document.getElementById("verrou");
 
-const canvas = document.getElementById("canvas");
-const contexte = canvas.getContext("2d");
+const appliquer =
+    document.getElementById("appliquer");
+
+const reinitialiser =
+    document.getElementById("reinitialiser");
+
+const canvas =
+    document.getElementById("canvas");
+
+const contexte =
+    canvas.getContext("2d");
 
 const informations =
     document.getElementById("informations");
@@ -316,46 +304,57 @@ const telecharger =
     document.getElementById("telecharger");
 
 
-let imageChargee = null;
+let image = null;
 let urlImage = null;
 
 
-// ==================================================
-// CHARGEMENT DE L'IMAGE
-// ==================================================
+/*
+==================================================
+CHARGER L'IMAGE
+==================================================
+*/
 
-inputImage.addEventListener("change", function () {
+imageInput.addEventListener("change", function () {
 
-    const fichier = inputImage.files[0];
+    const fichier = imageInput.files[0];
 
     if (!fichier) {
         return;
     }
 
-    // Supprime l'ancienne URL
+
     if (urlImage) {
         URL.revokeObjectURL(urlImage);
     }
 
-    urlImage = URL.createObjectURL(fichier);
 
-    const image = new Image();
+    urlImage =
+        URL.createObjectURL(fichier);
 
-    image.onload = function () {
 
-        imageChargee = image;
+    const nouvelleImage =
+        new Image();
+
+
+    nouvelleImage.onload = function () {
+
+        image = nouvelleImage;
+
 
         informations.textContent =
-            "Image originale : " +
+            "Image : " +
             image.naturalWidth +
             " × " +
             image.naturalHeight +
             " pixels";
 
-        appliquerModifications();
+
+        appliquerPixelisation();
+
     };
 
-    image.onerror = function () {
+
+    nouvelleImage.onerror = function () {
 
         alert(
             "Impossible de charger cette image."
@@ -363,54 +362,63 @@ inputImage.addEventListener("change", function () {
 
     };
 
-    image.src = urlImage;
+
+    nouvelleImage.src = urlImage;
 
 });
 
 
-// ==================================================
-// VERROU X / Y
-// ==================================================
+/*
+==================================================
+VERROU X / Y
+==================================================
+*/
 
-inputX.addEventListener("input", function () {
+pixelX.addEventListener("input", function () {
 
     if (verrou.checked) {
 
-        inputY.value = inputX.value;
+        pixelY.value =
+            pixelX.value;
 
     }
 
 });
 
 
-inputY.addEventListener("input", function () {
+pixelY.addEventListener("input", function () {
 
     if (verrou.checked) {
 
-        inputX.value = inputY.value;
+        pixelX.value =
+            pixelY.value;
 
     }
 
 });
 
 
-// ==================================================
-// BOUTON APPLIQUER
-// ==================================================
+/*
+==================================================
+BOUTON APPLIQUER
+==================================================
+*/
 
 appliquer.addEventListener(
     "click",
-    appliquerModifications
+    appliquerPixelisation
 );
 
 
-// ==================================================
-// FONCTION PRINCIPALE
-// ==================================================
+/*
+==================================================
+PIXELISATION
+==================================================
+*/
 
-function appliquerModifications() {
+function appliquerPixelisation() {
 
-    if (!imageChargee) {
+    if (!image) {
 
         alert(
             "Choisis d'abord une image."
@@ -420,63 +428,103 @@ function appliquerModifications() {
     }
 
 
-    let x = parseInt(inputX.value);
-    let y = parseInt(inputY.value);
+    let x =
+        parseInt(pixelX.value);
+
+    let y =
+        parseInt(pixelY.value);
 
 
-    // Vérification
-    if (isNaN(x) || isNaN(y)) {
+    if (
+        isNaN(x) ||
+        isNaN(y) ||
+        x < 1 ||
+        y < 1
+    ) {
 
         alert(
-            "X et Y doivent être des nombres."
+            "X et Y doivent être des nombres supérieurs à 0."
         );
 
         return;
     }
 
 
-    x = Math.max(1, Math.min(100, x));
-    y = Math.max(1, Math.min(100, y));
+    /*
+     * On limite les valeurs pour éviter
+     * de demander trop de calculs.
+     */
+
+    x = Math.min(x, 500);
+    y = Math.min(y, 500);
 
 
-    inputX.value = x;
-    inputY.value = y;
+    pixelX.value = x;
+    pixelY.value = y;
 
 
-    // ==================================================
-    // AGRANDIR
-    // ==================================================
+    /*
+    ==================================================
+    ÉTAPE 1
+    ==================================================
 
-    if (mode.value === "agrandir") {
+    Le canvas garde EXACTEMENT la taille
+    de l'image originale.
 
-        /*
-            Exemple :
+    Exemple :
 
-            Image originale :
-            100 × 100
+    Image = 800 × 600
 
-            X = 3
-            Y = 2
+    X = 4
+    Y = 4
 
-            Résultat :
-            300 × 200
+    Canvas final = 800 × 600
 
-            Chaque pixel devient donc
-            un rectangle de 3 × 2 pixels.
-        */
+    */
 
+    canvas.width =
+        image.naturalWidth;
 
-        canvas.width =
-            imageChargee.naturalWidth * x;
-
-        canvas.height =
-            imageChargee.naturalHeight * y;
+    canvas.height =
+        image.naturalHeight;
 
 
-        contexte.imageSmoothingEnabled = false;
+    /*
+    ==================================================
+    ÉTAPE 2
+    ==================================================
+
+    On dessine d'abord l'image originale.
+    */
+
+    contexte.imageSmoothingEnabled = false;
+
+    contexte.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
 
 
-        contexte.clearRect(
+    contexte.drawImage(
+        image,
+        0,
+        0
+    );
+
+
+    /*
+    ==================================================
+    ÉTAPE 3
+    ==================================================
+
+    On récupère tous les pixels.
+
+    */
+
+    const donnees =
+        contexte.getImageData(
             0,
             0,
             canvas.width,
@@ -484,147 +532,188 @@ function appliquerModifications() {
         );
 
 
-        contexte.drawImage(
-            imageChargee,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
+    const pixels =
+        donnees.data;
 
 
-        informations.textContent =
-            "Agrandissement : chaque pixel est répété " +
-            x +
-            " fois horizontalement et " +
-            y +
-            " fois verticalement." +
-            " Résultat : " +
-            canvas.width +
-            " × " +
-            canvas.height +
-            " pixels";
+    /*
+    ==================================================
+    ÉTAPE 4
+    ==================================================
+
+    On parcourt l'image par blocs.
+
+    Exemple X=4 Y=4 :
+
+        ┌────┬────┬────┐
+        │████│████│████│
+        │████│████│████│
+        │████│████│████│
+        │████│████│████│
+        └────┴────┴────┘
+
+    Chaque bloc reçoit la couleur moyenne
+    de ses pixels.
+    */
+
+    for (
+        let debutY = 0;
+        debutY < canvas.height;
+        debutY += y
+    ) {
+
+        for (
+            let debutX = 0;
+            debutX < canvas.width;
+            debutX += x
+        ) {
+
+
+            let totalR = 0;
+            let totalG = 0;
+            let totalB = 0;
+            let totalA = 0;
+
+            let nombrePixels = 0;
+
+
+            /*
+             * Calcul de la couleur moyenne
+             * du bloc.
+             */
+
+            for (
+                let py = debutY;
+                py < debutY + y &&
+                py < canvas.height;
+                py++
+            ) {
+
+                for (
+                    let px = debutX;
+                    px < debutX + x &&
+                    px < canvas.width;
+                    px++
+                ) {
+
+                    const position =
+                        (py * canvas.width + px) * 4;
+
+
+                    totalR +=
+                        pixels[position];
+
+                    totalG +=
+                        pixels[position + 1];
+
+                    totalB +=
+                        pixels[position + 2];
+
+                    totalA +=
+                        pixels[position + 3];
+
+
+                    nombrePixels++;
+
+                }
+
+            }
+
+
+            /*
+             * Couleur moyenne du bloc.
+             */
+
+            const rouge =
+                Math.round(
+                    totalR / nombrePixels
+                );
+
+            const vert =
+                Math.round(
+                    totalG / nombrePixels
+                );
+
+            const bleu =
+                Math.round(
+                    totalB / nombrePixels
+                );
+
+            const alpha =
+                Math.round(
+                    totalA / nombrePixels
+                );
+
+
+            /*
+             * On donne cette couleur
+             * à TOUS les pixels du bloc.
+             */
+
+            for (
+                let py = debutY;
+                py < debutY + y &&
+                py < canvas.height;
+                py++
+            ) {
+
+                for (
+                    let px = debutX;
+                    px < debutX + x &&
+                    px < canvas.width;
+                    px++
+                ) {
+
+                    const position =
+                        (py * canvas.width + px) * 4;
+
+
+                    pixels[position] =
+                        rouge;
+
+                    pixels[position + 1] =
+                        vert;
+
+                    pixels[position + 2] =
+                        bleu;
+
+                    pixels[position + 3] =
+                        alpha;
+
+                }
+
+            }
+
+        }
 
     }
 
 
-    // ==================================================
-    // REDUIRE
-    // ==================================================
+    /*
+    ==================================================
+    ÉTAPE 5
+    ==================================================
 
-    else {
+    On remet les pixels modifiés dans le canvas.
+    */
 
-        /*
-            Exemple :
-
-            Image originale :
-            800 × 600
-
-            X = 4
-            Y = 4
-
-            Résultat :
-            200 × 150
-
-            Chaque groupe de 4 × 4 pixels
-            devient un seul pixel.
-        */
+    contexte.putImageData(
+        donnees,
+        0,
+        0
+    );
 
 
-        canvas.width =
-            Math.max(
-                1,
-                Math.floor(
-                    imageChargee.naturalWidth / x
-                )
-            );
-
-
-        canvas.height =
-            Math.max(
-                1,
-                Math.floor(
-                    imageChargee.naturalHeight / y
-                )
-            );
-
-
-        contexte.imageSmoothingEnabled = false;
-
-
-        contexte.clearRect(
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
-
-
-        // Première étape :
-        // réduction vers une petite image
-
-        const petiteImage =
-            document.createElement("canvas");
-
-
-        petiteImage.width =
-            canvas.width;
-
-        petiteImage.height =
-            canvas.height;
-
-
-        const petitContexte =
-            petiteImage.getContext("2d");
-
-
-        /*
-            Pour une réduction de pixels,
-            on utilise le lissage pour obtenir
-            la couleur moyenne des pixels.
-        */
-
-        petitContexte.imageSmoothingEnabled = true;
-
-
-        petitContexte.drawImage(
-            imageChargee,
-            0,
-            0,
-            petiteImage.width,
-            petiteImage.height
-        );
-
-
-        // Deuxième étape :
-        // chaque pixel est affiché
-        // comme un pixel net.
-
-        contexte.imageSmoothingEnabled = false;
-
-
-        contexte.drawImage(
-            petiteImage,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
-
-
-        informations.textContent =
-            "Réduction : " +
-            x +
-            " × " +
-            y +
-            " pixels regroupés." +
-            " Résultat : " +
-            canvas.width +
-            " × " +
-            canvas.height +
-            " pixels";
-
-    }
+    informations.textContent =
+        "Image finale : " +
+        canvas.width +
+        " × " +
+        canvas.height +
+        " pixels — blocs de " +
+        x +
+        " × " +
+        y +
+        " pixels";
 
 
     preparerTelechargement();
@@ -632,9 +721,11 @@ function appliquerModifications() {
 }
 
 
-// ==================================================
-// TELECHARGEMENT
-// ==================================================
+/*
+==================================================
+TÉLÉCHARGEMENT
+==================================================
+*/
 
 function preparerTelechargement() {
 
@@ -645,7 +736,6 @@ function preparerTelechargement() {
         }
 
 
-        // Supprime l'ancien lien
         if (telecharger.dataset.url) {
 
             URL.revokeObjectURL(
@@ -661,7 +751,8 @@ function preparerTelechargement() {
 
         telecharger.href = url;
 
-        telecharger.dataset.url = url;
+        telecharger.dataset.url =
+            url;
 
         telecharger.style.display =
             "block";
@@ -671,43 +762,55 @@ function preparerTelechargement() {
 }
 
 
-// ==================================================
-// REINITIALISATION
-// ==================================================
+/*
+==================================================
+RÉINITIALISER
+==================================================
+*/
 
 reinitialiser.addEventListener(
     "click",
     function () {
 
-        inputX.value = 2;
-        inputY.value = 2;
+        pixelX.value = 4;
+        pixelY.value = 4;
 
         verrou.checked = true;
 
-        mode.value = "agrandir";
+
+        if (image) {
+
+            canvas.width =
+                image.naturalWidth;
+
+            canvas.height =
+                image.naturalHeight;
 
 
-        canvas.width = 0;
-        canvas.height = 0;
+            contexte.clearRect(
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
 
 
-        telecharger.style.display =
-            "none";
+            contexte.drawImage(
+                image,
+                0,
+                0
+            );
 
-
-        if (imageChargee) {
 
             informations.textContent =
-                "Image originale : " +
-                imageChargee.naturalWidth +
+                "Image : " +
+                image.naturalWidth +
                 " × " +
-                imageChargee.naturalHeight +
+                image.naturalHeight +
                 " pixels";
 
-        } else {
 
-            informations.textContent =
-                "Aucune image chargée.";
+            preparerTelechargement();
 
         }
 
