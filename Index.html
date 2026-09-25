@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pixeliseur X × X</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Arial, sans-serif;
+        background: #111;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 700px;
+        background: #202020;
+        padding: 25px;
+        border-radius: 18px;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0,0,0,.4);
+    }
+
+    h1 {
+        margin-top: 0;
+    }
+
+    .controls {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin: 20px 0;
+    }
+
+    input[type="file"] {
+        max-width: 100%;
+    }
+
+    input[type="number"] {
+        width: 100px;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+    button,
+    .download {
+        padding: 11px 18px;
+        border: none;
+        border-radius: 8px;
+        background: white;
+        color: black;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    button:hover,
+    .download:hover {
+        background: #ddd;
+    }
+
+    #info {
+        color: #bbb;
+        margin: 15px 0;
+    }
+
+    .preview {
+        margin-top: 20px;
+        padding: 15px;
+        background:
+            repeating-conic-gradient(#333 0% 25%, #222 0% 50%)
+            50% / 20px 20px;
+        border-radius: 12px;
+        overflow: auto;
+    }
+
+    canvas {
+        max-width: 100%;
+        height: auto;
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+        border: 2px solid white;
+    }
+
+    .download {
+        display: none;
+        margin-top: 20px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🖼️ Pixeliseur X × X</h1>
+
+    <p>Choisis une image puis sa résolution.</p>
+
+    <div class="controls">
+
+        <input
+            type="file"
+            id="imageInput"
+            accept="image/png,image/jpeg,image/webp"
+        >
+
+        <label>
+            X :
+            <input
+                type="number"
+                id="sizeInput"
+                value="32"
+                min="1"
+                max="2048"
+            >
+        </label>
+
+        <button id="applyButton">
+            Pixeliser
+        </button>
+
+    </div>
+
+    <div id="info">
+        Aucune image chargée
+    </div>
+
+    <div class="preview">
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <a
+        id="downloadButton"
+        class="download"
+        download="image_pixelisee.png"
+    >
+        ⬇️ Télécharger
+    </a>
+
+</div>
+
+<script>
+const imageInput = document.getElementById("imageInput");
+const sizeInput = document.getElementById("sizeInput");
+const applyButton = document.getElementById("applyButton");
+const canvas = document.getElementById("canvas");
+const downloadButton = document.getElementById("downloadButton");
+const info = document.getElementById("info");
+
+const ctx = canvas.getContext("2d", {
+    alpha: true
+});
+
+let image = null;
+let imageURL = null;
+
+
+// Quand l'utilisateur choisit une image
+imageInput.addEventListener("change", function () {
+
+    const file = imageInput.files[0];
+
+    if (!file) {
+        return;
+    }
+
+    // Supprime l'ancienne URL
+    if (imageURL) {
+        URL.revokeObjectURL(imageURL);
+    }
+
+    imageURL = URL.createObjectURL(file);
+
+    const img = new Image();
+
+    img.onload = function () {
+
+        image = img;
+
+        info.textContent =
+            `Image originale : ${img.naturalWidth} × ${img.naturalHeight} pixels`;
+
+        // Affichage automatique
+        resizeImage();
+    };
+
+    img.onerror = function () {
+        alert("Impossible de charger cette image.");
+    };
+
+    img.src = imageURL;
+});
+
+
+// Bouton Pixeliser
+applyButton.addEventListener("click", resizeImage);
+
+
+// Touche Entrée dans la case X
+sizeInput.addEventListener("keydown", function (event) {
+
+    if (event.key === "Enter") {
+        resizeImage();
+    }
+
+});
+
+
+function resizeImage() {
+
+    if (!image) {
+        alert("Choisis d'abord une image !");
+        return;
+    }
+
+    let size = parseInt(sizeInput.value);
+
+    if (isNaN(size)) {
+        alert("Entre une taille valide.");
+        return;
+    }
+
+    size = Math.max(1, Math.min(2048, size));
+
+    sizeInput.value = size;
+
+
+    // Canvas final = X × X
+    canvas.width = size;
+    canvas.height = size;
+
+
+    // Important :
+    // on désactive le lissage pour obtenir des pixels nets
+    ctx.imageSmoothingEnabled = false;
+
+
+    // Nettoyage
+    ctx.clearRect(0, 0, size, size);
+
+
+    // Dessin de l'image en X × X
+    ctx.drawImage(
+        image,
+        0,
+        0,
+        size,
+        size
+    );
+
+
+    info.textContent =
+        `Résolution finale : ${size} × ${size} pixels`;
+
+
+    // Prépare le téléchargement
+    canvas.toBlob(function (blob) {
+
+        if (!blob) {
+            alert("Erreur lors de la création de l'image.");
+            return;
+        }
+
+        // Supprime l'ancien lien
+        if (downloadButton.dataset.url) {
+            URL.revokeObjectURL(downloadButton.dataset.url);
+        }
+
+        const url = URL.createObjectURL(blob);
+
+        downloadButton.href = url;
+        downloadButton.dataset.url = url;
+
+        downloadButton.style.display = "inline-block";
+
+    }, "image/png");
+}
+</script>
+
+</body>
+</html>
